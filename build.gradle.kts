@@ -3,6 +3,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.4"
     kotlin("jvm") version "1.9.24"
     kotlin("plugin.spring") version "1.9.23"
+    id("com.gradleup.shadow") version "8.3.5"
     id("maven-publish")
 }
 
@@ -38,6 +39,11 @@ publishing {
                 username = System.getenv("GITHUB_ACTOR")
                 password = System.getenv("GITHUB_TOKEN")
             }
+        }
+    }
+    publications {
+        register("gpr", MavenPublication::class) {
+            from(components["java"])
         }
     }
 }
