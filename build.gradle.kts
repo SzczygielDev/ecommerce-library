@@ -3,11 +3,12 @@ plugins {
     id("io.spring.dependency-management") version "1.1.4"
     kotlin("jvm") version "1.9.24"
     kotlin("plugin.spring") version "1.9.23"
+    id("com.gradleup.shadow") version "8.3.5"
     id("maven-publish")
 }
 
 group = "pl.szczygieldev"
-version = "1.0-SNAPSHOT"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -33,11 +34,20 @@ publishing {
     repositories {
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/SzczygielDev/ecommerce-library")
+            url = uri("https://maven.pkg.github.com/szczygieldev/ecommerce-library")
             credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
             }
         }
     }
+    publications {
+        register("gpr", MavenPublication::class) {
+            from(components["java"])
+        }
+    }
+}
+
+tasks.bootJar {
+    enabled = false
 }
