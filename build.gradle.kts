@@ -20,6 +20,10 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.18.1")
     implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
 
+    implementation("io.arrow-kt:arrow-core:1.2.4")
+    implementation("com.trendyol:kediatr-core:3.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0-RC")
+    implementation("org.jetbrains.exposed:exposed-core:0.55.0")
 }
 
 tasks.test {
