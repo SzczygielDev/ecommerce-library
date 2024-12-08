@@ -3,7 +3,7 @@ package pl.szczygieldev.ecommercelibrary.command
 import arrow.core.Either
 
 interface Mediator {
-    suspend fun send(command: Command): Either<CommandError, Unit>
+    suspend fun <T: CommandError> send(command: Command<T>): Either<T, Unit>
 
-    suspend fun sendAsync(command: Command)
+    suspend fun <T: CommandError> sendAsync(command: Command<T>)
 }

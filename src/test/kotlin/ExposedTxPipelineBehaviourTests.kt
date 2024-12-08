@@ -16,9 +16,9 @@ import pl.szczygieldev.ecommercelibrary.command.CommandError
 import pl.szczygieldev.ecommercelibrary.command.ExposedTxPipelineBehaviour
 
 class ExposedTxPipelineBehaviourTests {
-    class SuccessCommand : Command()
+    class SuccessCommand : Command<CommandError>()
 
-    class FailingCommand : Command()
+    class FailingCommand : Command<CommandError>()
 
     class SuccessCommandHandler :
         CommandWithResultHandler<SuccessCommand, Either<CommandError, Unit>> {
