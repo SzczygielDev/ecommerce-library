@@ -1,7 +1,7 @@
 package pl.szczygieldev.ecommercelibrary.command
 
-import arrow.core.Either
-import arrow.core.raise.either
+import pl.szczygieldev.ecommercelibrary.command.exception.CommandAlreadyProcessingException
+import pl.szczygieldev.ecommercelibrary.command.exception.CommandNotFoundException
 import java.time.Duration
 import java.time.Instant
 
@@ -11,9 +11,9 @@ class InMemoryCommandResultStorage : CommandResultStorage {
     override fun findById(id: CommandId): CommandResult? = db[id]
     override fun findAll(): List<CommandResult> = db.values.toList()
 
-    override fun commandBegin(command: Command): Either<CommandError, Unit>  = either {
+    override fun <T: CommandError> commandBegin(command: Command<T>) {
         if(db.containsKey(command.id)){
-            raise(CommandAlreadyProcessingError.forId(command.id))
+            throw CommandAlreadyProcessingException(command.id)
         }
 
         db.put(
@@ -22,24 +22,16 @@ class InMemoryCommandResultStorage : CommandResultStorage {
         )
     }
 
-    override fun commandFailed(id: CommandId, error: CommandError): Either<CommandError,Unit> = either {
-        val foundCommand = findById(id) ?: raise(CommandNotFoundError.forId(id))
+    override fun <T: CommandError> commandFailed(id: CommandId, error: T){
+        val foundCommand = findById(id) ?: throw CommandNotFoundException(id)
 
         foundCommand.status = CommandResultStatus.ERROR
         foundCommand.duration = Duration.between(foundCommand.timestamp, Instant.now())
         foundCommand.errors.add(CommandResultError(error.javaClass.name, error.message))
     }
 
-    override fun commandFailed(id: CommandId, errors: List<CommandError>) : Either<CommandError,Unit> = either{
-        val foundCommand = findById(id) ?: raise(CommandNotFoundError.forId(id))
-
-        foundCommand.status = CommandResultStatus.ERROR
-        foundCommand.duration = Duration.between(foundCommand.timestamp, Instant.now())
-        foundCommand.errors.addAll(errors.map { error -> CommandResultError(error.javaClass.name, error.message) })
-    }
-
-    override fun commandSuccess(id: CommandId) : Either<CommandError,Unit> = either{
-        val foundCommand = findById(id) ?: raise(CommandNotFoundError.forId(id))
+    override fun commandSuccess(id: CommandId) {
+        val foundCommand = findById(id) ?: throw CommandNotFoundException(id)
 
         foundCommand.status = CommandResultStatus.SUCCESS
         foundCommand.duration = Duration.between(foundCommand.timestamp, Instant.now())
