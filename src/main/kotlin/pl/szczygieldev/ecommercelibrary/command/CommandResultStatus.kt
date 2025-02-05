@@ -1,3 +1,8 @@
 package pl.szczygieldev.ecommercelibrary.command
 
-enum class CommandResultStatus { RUNNING, SUCCESS, ERROR }
+enum class CommandResultStatus {
+    WAITING,
+    PROCESSING,
+    SUCCESS,
+    FAILURE
+}

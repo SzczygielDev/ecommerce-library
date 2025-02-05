@@ -16,11 +16,11 @@ import pl.szczygieldev.ecommercelibrary.command.CommandError
 import pl.szczygieldev.ecommercelibrary.command.ExposedTxPipelineBehaviour
 
 class ExposedTxPipelineBehaviourTests {
-    class SuccessCommand : Command<CommandError>()
+    private class SuccessCommand : Command<CommandError>()
 
-    class FailingCommand : Command<CommandError>()
+    private class FailingCommand : Command<CommandError>()
 
-    class SuccessCommandHandler :
+    private class SuccessCommandHandler :
         CommandWithResultHandler<SuccessCommand, Either<CommandError, Unit>> {
 
         override suspend fun handle(command: SuccessCommand): Either<CommandError, Unit> = either {
@@ -38,7 +38,7 @@ class ExposedTxPipelineBehaviourTests {
         }
     }
 
-    class FailingCommandHandler :
+    private class FailingCommandHandler :
         CommandWithResultHandler<FailingCommand, Either<CommandError, Unit>> {
 
         override suspend fun handle(command: FailingCommand): Either<CommandError, Unit> = either {
