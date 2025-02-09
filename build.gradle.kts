@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "pl.szczygieldev"
-version = "2.1.0"
+version = "3.0.0"
 
 repositories {
     mavenCentral()
@@ -25,6 +25,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0-RC")
     implementation("org.jetbrains.exposed:exposed-core:0.55.0")
     runtimeOnly("org.jetbrains.exposed:exposed-jdbc:0.55.0")
+    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:0.55.0")
     testImplementation("io.kotest:kotest-runner-junit5-jvm:5.9.0")
     testImplementation("io.kotest:kotest-assertions-core-jvm:5.9.0")
     implementation("com.h2database:h2:2.2.224")
