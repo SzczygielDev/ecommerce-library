@@ -8,7 +8,8 @@ import pl.szczygieldev.ecommercelibrary.outbox.Outbox
 
 abstract class StoreAndForwardEventPublisher<T : DomainEvent<T>>(
     val eventPublisher: ApplicationEventPublisher,
-    val outbox: Outbox
+    val outbox: Outbox,
+    val eventMapper: IntegrationEventMapper<DomainEvent<*>>,
 ) : DomainEventPublisher<T> {
     companion object {
         private val log = KotlinLogging.logger { }
@@ -16,13 +17,17 @@ abstract class StoreAndForwardEventPublisher<T : DomainEvent<T>>(
 
     override fun publish(domainEvent: T) {
         eventPublisher.publishEvent(domainEvent)
-        outbox.insertEvent(domainEvent)
+        eventMapper.toIntegrationEvent(domainEvent)?.let { integrationEvent ->
+            outbox.insertEvent(integrationEvent)
+        }
     }
 
     override fun publishBatch(events: List<T>) {
-        events.forEach { event ->
-            eventPublisher.publishEvent(event)
-            outbox.insertEvent(event)
+        events.forEach { domainEvent ->
+            eventPublisher.publishEvent(domainEvent)
+            eventMapper.toIntegrationEvent(domainEvent)?.let { integrationEvent ->
+                outbox.insertEvent(integrationEvent)
+            }
         }
     }
 }
