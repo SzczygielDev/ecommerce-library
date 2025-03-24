@@ -1,6 +1,5 @@
 package pl.szczygieldev.ecommercelibrary.outbox
 
-import pl.szczygieldev.ecommercelibrary.ddd.core.DomainEvent
 import pl.szczygieldev.ecommercelibrary.messaging.IntegrationEvent
 
 interface Outbox {

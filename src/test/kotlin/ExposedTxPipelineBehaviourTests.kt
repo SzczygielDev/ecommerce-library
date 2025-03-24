@@ -55,7 +55,7 @@ class ExposedTxPipelineBehaviourTests {
                     it[name] = "B"
                 }
             } catch (e: Exception) {
-                raise(object : CommandError("Some error") {})
+                raise(object : CommandError("Some error","CODE-0") {})
             }
         }
     }

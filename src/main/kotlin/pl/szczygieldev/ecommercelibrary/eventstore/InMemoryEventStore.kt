@@ -21,7 +21,7 @@ class InMemoryEventStore(val objectMapper: ObjectMapper) : EventStore {
             currentVersion = 0
             eventsForAggregate = mutableListOf()
         } else if (currentVersion != exceptedVersion) {
-            throw EventStoreLockingException(aggregateId,currentVersion,exceptedVersion)
+            throw EventStoreLockingException(aggregateId, currentVersion, exceptedVersion)
         }
 
         var versionOfCurrentEvent = currentVersion
@@ -45,5 +45,13 @@ class InMemoryEventStore(val objectMapper: ObjectMapper) : EventStore {
         return store[aggregateId.id()]?.getSortedEvents()?.map {
             return@map objectMapper.readerFor(Class.forName(it.eventType)).readValue<T>(it.eventData)
         }
+    }
+
+    override fun <T : DomainEvent<T>> getEventsForType(type: String, offset: Int, limit: Int): List<T> {
+        return store.values.map { stream ->
+            stream.getSortedEvents().filter { it.eventType == type }.map { event ->
+                objectMapper.readerFor(Class.forName(event.eventType)).readValue<T>(event.eventData)
+            }
+        }.flatten().drop(offset).take(limit)
     }
 }
