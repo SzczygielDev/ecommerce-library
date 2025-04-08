@@ -3,14 +3,20 @@ package pl.szczygieldev.ecommercelibrary.eventstore
 import com.fasterxml.jackson.databind.ObjectMapper
 import pl.szczygieldev.ecommercelibrary.ddd.core.DomainEvent
 import pl.szczygieldev.ecommercelibrary.ddd.core.Identity
+import pl.szczygieldev.ecommercelibrary.event.ReactiveEventHandler
 import pl.szczygieldev.ecommercelibrary.eventstore.exception.EventStoreLockingException
 import pl.szczygieldev.ecommercelibrary.eventstore.model.Stream
 import pl.szczygieldev.ecommercelibrary.eventstore.model.StreamEntry
+import kotlin.reflect.jvm.jvmName
+import kotlinx.coroutines.*
 
 class InMemoryEventStore(val objectMapper: ObjectMapper) : EventStore {
-
     private val store = mutableMapOf<String, Stream>()
-    override fun appendEvents(aggregateId: Identity<*>, events: List<DomainEvent<*>>, exceptedVersion: Int) {
+
+    // Event class name : list of listeners
+    private val listeners = mutableMapOf<String, MutableList<ReactiveEventHandler<*>>>()
+
+    override suspend fun appendEvents(aggregateId: Identity<*>, events: List<DomainEvent<*>>, exceptedVersion: Int) {
         val foundStream = store[aggregateId.id()]
 
         var eventsForAggregate = foundStream?.getSortedEvents()?.toMutableList()
@@ -39,6 +45,14 @@ class InMemoryEventStore(val objectMapper: ObjectMapper) : EventStore {
         }
 
         store[aggregateId.id()] = Stream.of(aggregateId, eventsForAggregate)
+
+        for (event in events) {
+            coroutineScope {
+                listeners[event::class.jvmName]?.let {
+                    it.forEach { listener -> launch { listener.notify() } }
+                }
+            }
+        }
     }
 
     final override fun <T : DomainEvent<T>> getEvents(aggregateId: Identity<*>): List<T>? {
@@ -53,5 +67,14 @@ class InMemoryEventStore(val objectMapper: ObjectMapper) : EventStore {
                 objectMapper.readerFor(Class.forName(event.eventType)).readValue<T>(event.eventData)
             }
         }.flatten().drop(offset).take(limit)
+    }
+
+    override fun <T : DomainEvent<T>> registerListener(type: String, listener: ReactiveEventHandler<T>) {
+        val listenersForType = listeners[type]
+        if (listenersForType == null) {
+            listeners[type] = mutableListOf(listener)
+        } else {
+            listenersForType.add(listener)
+        }
     }
 }

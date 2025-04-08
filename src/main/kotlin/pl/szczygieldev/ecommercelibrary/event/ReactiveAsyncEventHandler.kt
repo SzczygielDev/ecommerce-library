@@ -13,15 +13,23 @@ import pl.szczygieldev.ecommercelibrary.messaging.MessageQueue
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
-abstract class PollingAsyncEventHandler<T : DomainEvent<T>>(
+abstract class ReactiveAsyncEventHandler<T : DomainEvent<T>>(
     private val eventClass: KClass<T>,
     private val objectMapper: ObjectMapper,
-    open val eventStore: EventStore,
+    val eventStore: EventStore,
     override val eventQueue: MessageQueue<T>
-) : AsyncEventHandler<T>(eventQueue) {
+) : AsyncEventHandler<T>(eventQueue), ReactiveEventHandler<T>{
     private val log = KotlinLogging.logger(javaClass.name)
     var offset = 0;
     val limit = 100;
+
+    init {
+        eventStore.registerListener(eventClass.jvmName, this)
+    }
+
+    override suspend fun notify() {
+        processInternal()
+    }
 
     suspend fun processInternal() {
         log.debug { "Begin event pulling TX" }

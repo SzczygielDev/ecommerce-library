@@ -31,7 +31,13 @@ class InMemoryMessageQueue<T>(val config: MessageQueueConfig) : MessageQueue<T> 
 
     override fun pull(): Message<T>? {
         val message = queue.poll() ?: return null
-        val updatedMessage = message.copy(state = message.state.copy(status = MessageProcessingStatus.PROCESSING, beginTimestamp = Clock.System.now(), finishTimestamp = null))
+        val updatedMessage = message.copy(
+            state = message.state.copy(
+                status = MessageProcessingStatus.PROCESSING,
+                beginTimestamp = Clock.System.now(),
+                finishTimestamp = null
+            )
+        )
         messagesInProcessing.add(updatedMessage)
 
         messageDb[updatedMessage.id] = updatedMessage
@@ -41,7 +47,12 @@ class InMemoryMessageQueue<T>(val config: MessageQueueConfig) : MessageQueue<T> 
     override fun ack(message: Message<T>) {
         messagesInProcessing.remove(message)
 
-        val updatedMessage = message.copy(state = message.state.copy(status = MessageProcessingStatus.SUCCESS, finishTimestamp =Clock.System.now()))
+        val updatedMessage = message.copy(
+            state = message.state.copy(
+                status = MessageProcessingStatus.SUCCESS,
+                finishTimestamp = Clock.System.now()
+            )
+        )
 
         messageDb[updatedMessage.id] = updatedMessage
     }
@@ -58,7 +69,12 @@ class InMemoryMessageQueue<T>(val config: MessageQueueConfig) : MessageQueue<T> 
 
         if (updatedMessage.state.failCount >= config.maxMessageRetries) {
             val dlqMessage =
-                updatedMessage.copy(state = updatedMessage.state.copy(status = MessageProcessingStatus.FAILURE, finishTimestamp =Clock.System.now()))
+                updatedMessage.copy(
+                    state = updatedMessage.state.copy(
+                        status = MessageProcessingStatus.FAILURE,
+                        finishTimestamp = Clock.System.now()
+                    )
+                )
             dlq.add(dlqMessage)
             messageDb[dlqMessage.id] = dlqMessage
             return
@@ -84,4 +100,8 @@ class InMemoryMessageQueue<T>(val config: MessageQueueConfig) : MessageQueue<T> 
             }
         }
     }
+
+    override fun isDlqEmpty(): Boolean = dlq.isEmpty()
+
+    override fun getDlqSize(): Int = dlq.size
 }
