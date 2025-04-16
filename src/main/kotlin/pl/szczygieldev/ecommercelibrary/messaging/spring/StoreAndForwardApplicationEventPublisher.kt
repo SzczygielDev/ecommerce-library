@@ -1,14 +1,14 @@
-package pl.szczygieldev.ecommercelibrary.messaging
+package pl.szczygieldev.ecommercelibrary.messaging.spring
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kotlinx.coroutines.runBlocking
-import pl.szczygieldev.ecommercelibrary.command.Mediator
+import org.springframework.context.ApplicationEventPublisher
 import pl.szczygieldev.ecommercelibrary.ddd.core.DomainEvent
 import pl.szczygieldev.ecommercelibrary.ddd.core.DomainEventPublisher
+import pl.szczygieldev.ecommercelibrary.messaging.IntegrationEventMapper
 import pl.szczygieldev.ecommercelibrary.outbox.Outbox
 
-abstract class StoreAndForwardEventPublisher<T : DomainEvent<T>>(
-    val mediator: Mediator,
+abstract class StoreAndForwardApplicationEventPublisher<T : DomainEvent<T>>(
+    val eventPublisher: ApplicationEventPublisher,
     val outbox: Outbox,
     val eventMapper: IntegrationEventMapper<DomainEvent<*>>,
 ) : DomainEventPublisher<T> {
@@ -16,16 +16,16 @@ abstract class StoreAndForwardEventPublisher<T : DomainEvent<T>>(
         private val log = KotlinLogging.logger { }
     }
 
-    override fun publish(domainEvent: T): Unit = runBlocking{
-        mediator.send(domainEvent)
+    override fun publish(domainEvent: T) {
+        eventPublisher.publishEvent(domainEvent)
         eventMapper.toIntegrationEvent(domainEvent)?.let { integrationEvent ->
             outbox.insertEvent(integrationEvent)
         }
     }
 
-    override fun publishBatch(events: List<T>): Unit = runBlocking {
+    override fun publishBatch(events: List<T>) {
         events.forEach { domainEvent ->
-            mediator.send(domainEvent)
+            eventPublisher.publishEvent(domainEvent)
             eventMapper.toIntegrationEvent(domainEvent)?.let { integrationEvent ->
                 outbox.insertEvent(integrationEvent)
             }
