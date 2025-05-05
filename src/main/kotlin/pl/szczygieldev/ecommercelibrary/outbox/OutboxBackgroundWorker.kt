@@ -14,7 +14,7 @@ class OutboxBackgroundWorker(
         private val log = KotlinLogging.logger { }
     }
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 1000)
     fun processOutbox() {
         outbox.getEventsForProcessing().map { outboxMessage ->
             objectMapper.readerFor(Class.forName(outboxMessage.eventType))
