@@ -1,10 +1,10 @@
-package pl.szczygieldev.ecommercelibrary.messaging.spring
+package pl.szczygieldev.ecommercelibrary.outbox.spring
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.context.ApplicationEventPublisher
 import pl.szczygieldev.ecommercelibrary.ddd.core.DomainEvent
 import pl.szczygieldev.ecommercelibrary.ddd.core.DomainEventPublisher
-import pl.szczygieldev.ecommercelibrary.messaging.IntegrationEventMapper
+import pl.szczygieldev.ecommercelibrary.outbox.IntegrationEventMapper
 import pl.szczygieldev.ecommercelibrary.outbox.Outbox
 
 abstract class StoreAndForwardApplicationEventPublisher<T : DomainEvent<T>>(

@@ -1,4 +1,4 @@
-package pl.szczygieldev.ecommercelibrary.messaging
+package pl.szczygieldev.ecommercelibrary.outbox
 
 import java.time.Instant
 import java.util.UUID

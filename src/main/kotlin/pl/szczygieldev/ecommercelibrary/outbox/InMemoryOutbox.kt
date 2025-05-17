@@ -1,8 +1,6 @@
 package pl.szczygieldev.ecommercelibrary.outbox
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import pl.szczygieldev.ecommercelibrary.ddd.core.DomainEvent
-import pl.szczygieldev.ecommercelibrary.messaging.IntegrationEvent
 
 class InMemoryOutbox(val objectMapper: ObjectMapper) : Outbox {
     private val db = mutableSetOf<OutboxMessage>()

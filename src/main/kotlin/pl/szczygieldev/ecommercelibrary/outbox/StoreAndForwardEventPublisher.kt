@@ -1,11 +1,10 @@
-package pl.szczygieldev.ecommercelibrary.messaging
+package pl.szczygieldev.ecommercelibrary.outbox
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.runBlocking
 import pl.szczygieldev.ecommercelibrary.command.Mediator
 import pl.szczygieldev.ecommercelibrary.ddd.core.DomainEvent
 import pl.szczygieldev.ecommercelibrary.ddd.core.DomainEventPublisher
-import pl.szczygieldev.ecommercelibrary.outbox.Outbox
 
 abstract class StoreAndForwardEventPublisher<T : DomainEvent<T>>(
     val mediator: Mediator,
