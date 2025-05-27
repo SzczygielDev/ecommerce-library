@@ -1,11 +1,10 @@
 package pl.szczygieldev.ecommercelibrary.outbox
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import pl.szczygieldev.ecommercelibrary.ddd.core.DomainEvent
 
 class InMemoryOutbox(val objectMapper: ObjectMapper) : Outbox {
     private val db = mutableSetOf<OutboxMessage>()
-    override fun insertEvent(event: DomainEvent<*>) {
+    override fun insertEvent(event: IntegrationEvent) {
         db.add(
             OutboxMessage(
                 event.id,
@@ -17,13 +16,13 @@ class InMemoryOutbox(val objectMapper: ObjectMapper) : Outbox {
         )
     }
 
-    override fun insertEvents(events: List<DomainEvent<*>>) {
+    override fun insertEvents(events: List<IntegrationEvent>) {
         events.forEach { event ->
             insertEvent(event)
         }
     }
 
-    override fun markAsProcessed(event: DomainEvent<*>) {
+    override fun markAsProcessed(event: IntegrationEvent) {
         db.find { message -> message.eventId == event.id }?.status = OutboxMessageStatus.PROCESSED
     }
 

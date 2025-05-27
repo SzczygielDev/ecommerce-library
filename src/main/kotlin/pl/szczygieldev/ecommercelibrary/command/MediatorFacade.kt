@@ -3,6 +3,7 @@ package pl.szczygieldev.ecommercelibrary.command
 import arrow.core.Either
 import com.trendyol.kediatr.Mediator
 import com.trendyol.kediatr.Query
+import pl.szczygieldev.ecommercelibrary.ddd.core.DomainEvent
 
 class MediatorFacade(val kediatr: Mediator) :
     pl.szczygieldev.ecommercelibrary.command.Mediator {
@@ -13,5 +14,9 @@ class MediatorFacade(val kediatr: Mediator) :
 
     override suspend fun <TQuery : Query<TResponse>, TResponse> send(query: TQuery): TResponse {
         return kediatr.send(query)
+    }
+
+    override suspend fun <T : DomainEvent<T>> send(event: DomainEvent<T>) : Unit {
+        return kediatr.publish(event)
     }
 }

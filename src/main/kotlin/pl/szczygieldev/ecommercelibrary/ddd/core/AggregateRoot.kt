@@ -1,9 +1,8 @@
-package pl.szczygieldev.ecommercelibrary.architecture
-
+package pl.szczygieldev.ecommercelibrary.ddd.core
 
 import java.lang.annotation.Inherited
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 @Inherited
-annotation class UseCase
+annotation class AggregateRoot

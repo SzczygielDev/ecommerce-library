@@ -27,7 +27,7 @@ class CommandProcessorTests : FunSpec() {
         CommandWithResultHandler<FailingWithErrorCommand, Either<CommandError, Unit>> {
 
         override suspend fun handle(command: FailingWithErrorCommand): Either<CommandError, Unit> = either {
-            raise(object : CommandError(("some error")) {})
+            raise(object : CommandError("some error","CODE-0") {})
         }
     }
 

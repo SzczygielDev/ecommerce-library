@@ -8,8 +8,8 @@ plugins {
 }
 
 group = "pl.szczygieldev"
-version = "3.0.0"
-
+version = "4.0.0"
+val jacksonDatabindVersion="2.18.1"
 repositories {
     mavenCentral()
 }
@@ -18,6 +18,8 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation("org.springframework.boot:spring-boot-starter:3.4.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.18.1")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.1")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.1")
     implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
 
     implementation("io.arrow-kt:arrow-core:1.2.4")
@@ -30,6 +32,16 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core-jvm:5.9.0")
     implementation("com.h2database:h2:2.2.224")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+}
+
+configurations {
+    all {
+        resolutionStrategy.eachDependency {
+            if (requested.group.startsWith("com.fasterxml.jackson")) {
+                useVersion("$jacksonDatabindVersion")
+            }
+        }
+    }
 }
 
 tasks.test {
