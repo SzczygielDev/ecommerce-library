@@ -18,7 +18,7 @@ class InMemoryMessageQueue<T>(val config: MessageQueueConfig) : MessageQueue<T> 
 
     private val log = KotlinLogging.logger(javaClass.name)
     private val coroutineScope =
-        CoroutineScope(Job() + CoroutineExceptionHandler { context, throwable -> log.error { "Exception while processing command in background: $throwable" } })
+        CoroutineScope(SupervisorJob() + CoroutineExceptionHandler { context, throwable -> log.error { "Exception while processing command in background: $throwable" } })
 
 
     override suspend fun push(message: Message<T>) {
