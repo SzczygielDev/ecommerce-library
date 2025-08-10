@@ -4,7 +4,6 @@ import com.trendyol.kediatr.CommandWithResultHandler
 import com.trendyol.kediatr.MappingDependencyProvider.Companion.createMediator
 import io.kotest.assertions.nondeterministic.until
 import io.kotest.core.spec.style.FunSpec
-import kotlinx.coroutines.delay
 import pl.szczygieldev.ecommercelibrary.command.*
 import pl.szczygieldev.ecommercelibrary.messaging.InMemoryMessageQueue
 import pl.szczygieldev.ecommercelibrary.messaging.config.MessageQueueConfig

@@ -18,7 +18,7 @@ abstract class PollingAsyncEventHandler<T : DomainEvent<T>>(
     private val objectMapper: ObjectMapper,
     open val eventStore: EventStore,
     override val eventQueue: MessageQueue<T>
-) : AsyncEventHandler<T>(eventQueue) {
+) : pl.szczygieldev.ecommercelibrary.event.AsyncEventHandler<T>(eventQueue) {
     private val log = KotlinLogging.logger(javaClass.name)
     var offset = 0;
     val limit = 100;

@@ -25,15 +25,15 @@ class ExposedTxPipelineBehaviourTests {
 
         override suspend fun handle(command: SuccessCommand): Either<CommandError, Unit> = either {
             TxTestTable.insert {
-                it[name] = "A"
+                it[TxTestTable.name] = "A"
             }
 
             TxTestTable.insert {
-                it[name] = "B"
+                it[TxTestTable.name] = "B"
             }
 
             TxTestTable.insert {
-                it[name] = "C"
+                it[TxTestTable.name] = "C"
             }
         }
     }
@@ -44,15 +44,15 @@ class ExposedTxPipelineBehaviourTests {
         override suspend fun handle(command: FailingCommand): Either<CommandError, Unit> = either {
             try {
                 TxTestTable.insert {
-                    it[name] = "A"
+                    it[TxTestTable.name] = "A"
                 }
 
                 TxTestTable.insert {
-                    it[name] = "A"
+                    it[TxTestTable.name] = "A"
                 }
 
                 TxTestTable.insert {
-                    it[name] = "B"
+                    it[TxTestTable.name] = "B"
                 }
             } catch (e: Exception) {
                 raise(object : CommandError("Some error","CODE-0") {})

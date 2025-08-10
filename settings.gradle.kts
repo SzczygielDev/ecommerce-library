@@ -10,3 +10,6 @@ plugins {
 }
 
 rootProject.name = "ecommerce-library"
+include("shipment-sdk")
+include("framework")
+include("payment-sdk")
