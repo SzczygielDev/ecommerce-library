@@ -14,6 +14,9 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+    implementation("org.springframework.boot:spring-boot-starter:3.2.5")
+    implementation("org.springframework.boot:spring-boot-starter-webflux:3.4.0")
 }
 
 tasks.test {
