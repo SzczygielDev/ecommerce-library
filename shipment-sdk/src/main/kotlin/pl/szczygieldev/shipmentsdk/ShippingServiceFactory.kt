@@ -4,8 +4,8 @@ import pl.szczygieldev.shipmentsdk.impl.FakeShippingService
 
 class ShippingServiceFactory {
     companion object{
-        fun create(): ShippingService {
-            return FakeShippingService()
+        fun create(apiKey: String): ShippingService {
+            return FakeShippingService(apiKey)
         }
     }
 }

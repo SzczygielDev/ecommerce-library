@@ -12,9 +12,10 @@ import pl.szczygieldev.shipmentsdk.model.*
 import java.net.URL
 import java.util.*
 
-internal class FakeShippingService : ShippingService {
+internal class FakeShippingService(apiKey: String) : ShippingService {
     private val webClient = WebClient.builder()
         .baseUrl("http://localhost:8080/external/shipping/")
+        .defaultHeader("X-API-KEY", apiKey)
         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         .build()
 
@@ -23,7 +24,6 @@ internal class FakeShippingService : ShippingService {
             DeliveryProvider.MockDeliveryProvider -> {
                 val response = webClient.post()
                     .uri("/register")
-                    .accept(MediaType.APPLICATION_JSON)
                     .bodyValue(
                         RegisterParcelRequest(
                             parcelDimensions.width,
